@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-from django.utils.translation import ugettext_lazy as _
 from django.conf import settings as django_settings
 
 
@@ -15,7 +14,7 @@ class SettingsProxy(object):
             try:
                 return getattr(self.defaults, attr)
             except AttributeError:
-                raise AttributeError, u'settings object has no attribute "%s"' % attr
+                raise AttributeError(u'settings object has no attribute "%s"' % attr)
 
 
 class defaults(object):
