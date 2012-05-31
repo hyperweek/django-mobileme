@@ -37,7 +37,7 @@ def get_flavour_from_request(request):
     Analyzes the request to find what flavour the user wants the system to
     show. Only flavours listed in settings.FLAVOURS are taken into account.
     """
-    from django_mobile.conf import settings
+    from mobileme.conf import settings
 
     if hasattr(request, 'session'):
         flavour = request.session.get(settings.FLAVOURS_SESSION_NAME, None)

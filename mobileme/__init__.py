@@ -1,5 +1,6 @@
 import threading
-from django_mobile.conf import settings
+
+from .conf import settings
 
 _local = threading.local()
 

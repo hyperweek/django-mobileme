@@ -1,12 +1,14 @@
 import threading
-from django.conf import settings as django_settings
+
 from django.template import RequestContext, TemplateDoesNotExist
 from django.template.loaders import app_directories, filesystem
 from django.test import Client, TestCase
+
 from mock import MagicMock, Mock, patch
-from django_mobile import get_flavour, set_flavour
-from django_mobile.conf import settings
-from django_mobile.middleware import MobileDetectionMiddleware, \
+
+from mobileme import get_flavour, set_flavour
+from mobileme.conf import settings
+from mobileme.middleware import MobileDetectionMiddleware, \
     SetFlavourMiddleware
 
 
