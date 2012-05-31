@@ -37,7 +37,7 @@ USE_I18N = True
 
 # Absolute path to the directory that holds media.
 # Example: "/home/media/media.lawrence.com/"
-MEDIA_ROOT = os.path.join(PROJECT_ROOT, 'django_mobile_tests', 'media')
+MEDIA_ROOT = os.path.join(PROJECT_ROOT, 'mobileme_tests', 'media')
 
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash if there is a path component (optional in other cases).
@@ -54,10 +54,11 @@ SECRET_KEY = '<REPLACE:SECRET_KEY>'
 
 # List of callables that know how to import templates from various sources.
 TEMPLATE_LOADERS = (
-    'django_mobile.loader.Loader',
-    'django.template.loaders.filesystem.Loader',
-    'django.template.loaders.app_directories.Loader',
-#     'django.template.loaders.eggs.load_template_source',
+    ('mobileme.loaders.Loader', (
+        'django.template.loaders.filesystem.Loader',
+        'django.template.loaders.app_directories.Loader',
+        # 'django.template.loaders.eggs.load_template_source',
+    )),
 )
 
 MIDDLEWARE_CLASSES = (
@@ -65,14 +66,13 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.middleware.doc.XViewMiddleware',
-    'django_mobile.middleware.MobileDetectionMiddleware',
-    'django_mobile.middleware.SetFlavourMiddleware',
+    'mobileme.middleware.DetectMobileMiddleware',
 )
 
-ROOT_URLCONF = 'django_mobile_tests.urls'
+ROOT_URLCONF = 'mobileme_tests.urls'
 
 TEMPLATE_DIRS = (
-    os.path.join(PROJECT_ROOT, 'django_mobile_tests', 'templates'),
+    os.path.join(PROJECT_ROOT, 'mobileme_tests', 'templates'),
 )
 
 INSTALLED_APPS = (
@@ -82,21 +82,20 @@ INSTALLED_APPS = (
     'django.contrib.sites',
     'django.contrib.admin',
 
-    'django_mobile',
-    'django_mobile_tests',
+    'mobileme',
+    'mobileme_tests',
 )
 
 TEMPLATE_CONTEXT_PROCESSORS = (
-    "django.core.context_processors.auth",
-    "django.core.context_processors.debug",
-    "django.core.context_processors.i18n",
-    "django.core.context_processors.media",
-    "django_mobile.context_processors.flavour",
-    "django_mobile.context_processors.is_mobile",
+    'django.core.context_processors.auth',
+    'django.core.context_processors.debug',
+    'django.core.context_processors.i18n',
+    'django.core.context_processors.media',
+    'mobileme.context_processors.flavour',
+    'mobileme.context_processors.is_mobile',
 )
 
 try:
     from local_settings import *
 except ImportError:
     pass
-

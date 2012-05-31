@@ -8,17 +8,16 @@ from mock import MagicMock, Mock, patch
 
 from mobileme import get_flavour, set_flavour
 from mobileme.conf import settings
-from mobileme.middleware import MobileDetectionMiddleware, \
-    SetFlavourMiddleware
+from mobileme.middleware import DetectMobileMiddleware
 
 
 def _reset():
     '''
     Reset the thread local.
     '''
-    import django_mobile
-    del django_mobile._local
-    django_mobile._local = threading.local()
+    import mobileme
+    del mobileme._local
+    mobileme._local = threading.local()
 
 
 class BaseTestCase(TestCase):
@@ -37,34 +36,6 @@ class BasicFunctionTests(BaseTestCase):
         self.assertEqual(get_flavour(), 'mobile')
         self.assertRaises(ValueError, set_flavour, 'spam')
 
-    def test_set_flavour_with_cookie_backend(self):
-        original_FLAVOURS_STORAGE_BACKEND = settings.FLAVOURS_STORAGE_BACKEND
-        try:
-            settings.FLAVOURS_STORAGE_BACKEND = 'cookie'
-            request = Mock()
-            request.COOKIES = {}
-            set_flavour('mobile', request=request)
-            self.assertEqual(request.COOKIES, {})
-            set_flavour('mobile', request=request, permanent=True)
-            self.assertEqual(request.COOKIES, {settings.FLAVOURS_COOKIE_NAME: 'mobile'})
-            self.assertEqual(get_flavour(request), 'mobile')
-        finally:
-            settings.FLAVOURS_STORAGE_BACKEND = original_FLAVOURS_STORAGE_BACKEND
-
-    def test_set_flavour_with_session_backend(self):
-        original_FLAVOURS_STORAGE_BACKEND = settings.FLAVOURS_STORAGE_BACKEND
-        try:
-            settings.FLAVOURS_STORAGE_BACKEND = 'session'
-            request = Mock()
-            request.session = {}
-            set_flavour('mobile', request=request)
-            self.assertEqual(request.session, {})
-            set_flavour('mobile', request=request, permanent=True)
-            self.assertEqual(request.session, {settings.FLAVOURS_SESSION_NAME: 'mobile'})
-            self.assertEqual(get_flavour(request), 'mobile')
-        finally:
-            settings.FLAVOURS_STORAGE_BACKEND = original_FLAVOURS_STORAGE_BACKEND
-
 
 class TemplateLoaderTests(BaseTestCase):
     @patch.object(app_directories.Loader, 'load_template')
@@ -73,8 +44,9 @@ class TemplateLoaderTests(BaseTestCase):
         filesystem_loader.side_effect = TemplateDoesNotExist()
         app_directories_loader.side_effect = TemplateDoesNotExist()
 
-        from django_mobile.loader import Loader
-        loader = Loader()
+        from mobileme.loaders import Loader
+        loader = Loader([])
+        loader._cached_loaders = [filesystem_loader, app_directories_loader]
 
         set_flavour('mobile')
         try:
@@ -98,8 +70,9 @@ class TemplateLoaderTests(BaseTestCase):
         filesystem_loader.side_effect = TemplateDoesNotExist()
         app_directories_loader.side_effect = TemplateDoesNotExist()
 
-        from django_mobile.loader import Loader
-        loader = Loader()
+        from mobileme.loaders import Loader
+        loader = Loader([])
+        loader._cached_loaders = [filesystem_loader, app_directories_loader]
 
         set_flavour('mobile')
         try:
@@ -133,47 +106,47 @@ class TemplateLoaderTests(BaseTestCase):
         self.assertEqual(result, 'Mobile!')
 
 
-class MobileDetectionMiddlewareTests(BaseTestCase):
-    @patch('django_mobile.middleware.set_flavour')
+class DetectMobileMiddlewareTests(BaseTestCase):
+    @patch('mobileme.middleware.set_flavour')
     def test_mobile_browser_agent(self, set_flavour):
         request = Mock()
         request.META = {
             'HTTP_USER_AGENT': 'My Mobile Browser',
         }
-        middleware = MobileDetectionMiddleware()
+        middleware = DetectMobileMiddleware()
         middleware.process_request(request)
         self.assertEqual(set_flavour.call_args, (('mobile', request), {}))
 
-    @patch('django_mobile.middleware.set_flavour')
+    @patch('mobileme.middleware.set_flavour')
     def test_desktop_browser_agent(self, set_flavour):
         request = Mock()
         request.META = {
             'HTTP_USER_AGENT': 'My Desktop Browser',
         }
-        middleware = MobileDetectionMiddleware()
+        middleware = DetectMobileMiddleware()
         middleware.process_request(request)
         self.assertEqual(set_flavour.call_args, (('full', request), {}))
 
 
-class SetFlavourMiddlewareTests(BaseTestCase):
-    def test_set_default_flavour(self):
-        request = Mock()
-        request.META = MagicMock()
-        request.GET = {}
-        middleware = SetFlavourMiddleware()
-        middleware.process_request(request)
-        # default flavour is set
-        self.assertEqual(get_flavour(), 'full')
+# class SetFlavourMiddlewareTests(BaseTestCase):
+#     def test_set_default_flavour(self):
+#         request = Mock()
+#         request.META = MagicMock()
+#         request.GET = {}
+#         middleware = SetFlavourMiddleware()
+#         middleware.process_request(request)
+#         # default flavour is set
+#         self.assertEqual(get_flavour(), 'full')
 
-    @patch('django_mobile.middleware.set_flavour')
-    def test_set_flavour_through_get_parameter(self, set_flavour):
-        request = Mock()
-        request.META = MagicMock()
-        request.GET = {'flavour': 'mobile'}
-        middleware = SetFlavourMiddleware()
-        middleware.process_request(request)
-        self.assertEqual(set_flavour.call_args,
-            (('mobile', request), {'permanent': True}))
+#     @patch('mobileme.middleware.set_flavour')
+#     def test_set_flavour_through_get_parameter(self, set_flavour):
+#         request = Mock()
+#         request.META = MagicMock()
+#         request.GET = {'flavour': 'mobile'}
+#         middleware = SetFlavourMiddleware()
+#         middleware.process_request(request)
+#         self.assertEqual(set_flavour.call_args,
+#             (('mobile', request), {'permanent': True}))
 
 
 class RealAgentNameTests(BaseTestCase):

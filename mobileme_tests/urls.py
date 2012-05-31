@@ -1,7 +1,8 @@
 from django.conf.urls.defaults import *
 from django.shortcuts import render_to_response
 from django.template import RequestContext
-from django_mobile.cache import cache_page
+
+from mobileme.decorators import cache_page
 
 
 def index(request):
@@ -11,5 +12,5 @@ def index(request):
 
 urlpatterns = patterns('',
     url(r'^$', index),
-    url(r'^cached/$', cache_page(60*10)(index)),
+    url(r'^cached/$', cache_page(60 * 10)(index)),
 )
