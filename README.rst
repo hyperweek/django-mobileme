@@ -1,10 +1,10 @@
-=============
-django-mobile
-=============
+===============
+django-mobileme
+===============
 
 .. _introduction:
 
-**django-mobile** provides a simple way to detect mobile browsers and gives
+**django-mobileme** provides a simple way to detect mobile browsers and gives
 you tools at your hand to render some different templates to deliver a mobile
 version of your site to the user.
 
@@ -23,26 +23,26 @@ Installation
 
 .. _installation:
 
-*Pre-Requirements:* ``django_mobile`` depends on django's session framework. So
-before you try to use ``django_mobile`` make sure that the sessions framework
+*Pre-Requirements:* ``mobileme`` depends on django's session framework. So
+before you try to use ``mobileme`` make sure that the sessions framework
 is enabled and working.
 
-1. Install ``django_mobile`` with your favourite python tool, e.g. with
-   ``easy_install django_mobile`` or ``pip install django_mobile``.
-2. Add ``django_mobile`` to your ``INSTALLED_APPS`` setting in the
+1. Install ``mobileme`` with your favourite python tool, e.g. with
+   ``easy_install django-mobileme`` or ``pip install django-mobileme``.
+2. Add ``mobileme`` to your ``INSTALLED_APPS`` setting in the
    ``settings.py``.
-3. Add ``django_mobile.middleware.MobileDetectionMiddleware`` to your
+3. Add ``mobileme.middleware.MobileDetectionMiddleware`` to your
    ``MIDDLEWARE_CLASSES`` setting.
-4. Add ``django_mobile.middleware.SetFlavourMiddleware`` to your
+4. Add ``mobileme.middleware.SetFlavourMiddleware`` to your
    ``MIDDLEWARE_CLASSES`` setting. Make sure it's listed *after*
    ``MobileDetectionMiddleware`` and also after ``SessionMiddleware``.
-5. Add ``django_mobile.loader.Loader`` as first item to your
+5. Add ``mobileme.loader.Loader`` as first item to your
    ``TEMPLATE_LOADERS`` list in ``settings.py``.
-6. Add ``django_mobile.context_processors.flavour`` to your
+6. Add ``mobileme.context_processors.flavour`` to your
    ``TEMPLATE_CONTEXT_PROCESSORS`` setting.
 
-Now you should be able to use **django-mobile** in its glory. Read below of how
-things work and which settings can be tweaked to modify **django-mobile**'s
+Now you should be able to use **django-mobileme** in its glory. Read below of how
+things work and which settings can be tweaked to modify **django-mobileme**'s
 behaviour.
 
 
@@ -51,7 +51,7 @@ Usage
 
 .. _flavours:
 
-The concept of **django-mobile** is build around the ideas of different
+The concept of **django-mobileme** is build around the ideas of different
 *flavours* for your site. For example the *mobile* version is described as
 one possible *flavour*, the desktop version as another.
 
@@ -61,7 +61,7 @@ can make multiple mobile flavours available e.g. one for mobile safari on the
 iPhone and Android as well as one for Opera and an extra one for the internet
 tablets like the iPad.
 
-*Note:* By default **django-mobile** only distinguishes between *full* and
+*Note:* By default **django-mobileme** only distinguishes between *full* and
 *mobile* flavour.
 
 After the correct flavour is somehow chosen by the middlewares, it's
@@ -93,17 +93,17 @@ This will add ``(mobile version)`` to the title of your site if viewed with
 the mobile flavour enabled.
 
 *Note:* The ``flavour`` template variable is only available if you have set up the
-``django_mobile.context_processors.flavour`` context processor and used
+``mobileme.context_processors.flavour`` context processor and used
 django's ``RequestContext`` as context instance to render the template.
 
 Changing the current flavour
 ----------------------------
 
-The basic use case of **django-mobile** is obviously to serve a mobile version
+The basic use case of **django-mobileme** is obviously to serve a mobile version
 of your site to users. The selection of the correct flavour is usually already
 done in the middlewares when your own views are called. In some cases you want
 to change the currently used flavour in your view or somewhere else. You can
-do this by simply calling ``django_mobile.set_flavour(flavour[,
+do this by simply calling ``mobileme.set_flavour(flavour[,
 permanent=True])``. The first argument is self explaining. But keep in mind
 that you only can pass in a flavour that you is also in your ``FLAVOURS``
 setting. Otherwise ``set_flavour`` will raise a ``ValueError``. The optional
@@ -130,21 +130,21 @@ Notes on caching
 
 Django is shipping with some convenience methods to easily cache your views.
 One of them is ``django.views.decorators.cache.cache_page``. The problem with
-caching a whole page in conjunction with **django-mobile** is, that django's
+caching a whole page in conjunction with **django-mobileme** is, that django's
 caching system is not aware of flavours. This means that if the first request
 to a page is served with a mobile flavour, the second request might also
 get a page rendered with the mobile flavour from the cache -- even if the
 second one was requested by a desktop browser.
 
-**django-mobile** is shipping with it's own implementation of ``cache_page``
-to resolve this issue. Please use ``django_mobile.cache.cache_page`` instead
+**django-mobileme** is shipping with it's own implementation of ``cache_page``
+to resolve this issue. Please use ``mobileme.cache.cache_page`` instead
 of django's own ``cache_page`` decorator.
 
 You can also use django's caching middlewares
 ``django.middleware.cache.UpdateCacheMiddleware`` and
 ``FetchFromCacheMiddleware`` like you already do. But to make them aware of
 flavours, you need to add
-``django_mobile.cache.middleware.CacheFlavourMiddleware`` as second last item
+``mobileme.cache.middleware.CacheFlavourMiddleware`` as second last item
 in the ``MIDDLEWARE_CLASSES`` settings, right before
 ``FetchFromCacheMiddleware``.
 
@@ -152,14 +152,14 @@ in the ``MIDDLEWARE_CLASSES`` settings, right before
 Reference
 =========
 
-``django_mobile.get_flavour([request,] [default])``
+``mobileme.get_flavour([request,] [default])``
 
     Get the currently active flavour. If no flavour can be determined it will
     return *default*. This can happen if ``set_flavour`` was not called before
     in the current request-response cycle. *default* defaults to the first
     item in the ``FLAVOURS`` setting.
 
-``django_mobile.set_flavour(flavour, [request,] [permanent])``
+``mobileme.set_flavour(flavour, [request,] [permanent])``
 
     Set the *flavour* to be used for *request*. This will raise ``ValueError``
     if *flavour* is not in the ``FLAVOURS`` setting. You can try to set the
@@ -167,40 +167,40 @@ Reference
     fail if you are out of a request-response cycle. *request* defaults to the
     currently active request.
 
-``django_mobile.context_processors.flavour``
+``mobileme.context_processors.flavour``
 
     Context processor that adds the current flavour as *flavour* to the
     context.
 
-``django_mobile.context_processors.is_mobile``
+``mobileme.context_processors.is_mobile``
 
     This context processor will add a *is_mobile* variable to the context
     which is ``True`` if the current flavour equals the
     ``DEFAULT_MOBILE_FLAVOUR`` setting.
 
-``django_mobile.middleware.SetFlavourMiddleware``
+``mobileme.middleware.SetFlavourMiddleware``
 
     Takes care of loading the stored flavour from the user's session if set.
     Also sets the current request to a thread-local variable. This is needed
     to provide ``get_flavour()`` functionality without having access to the
     request object.
 
-``django_mobile.middleware.MobileDetectionMiddleware``
+``mobileme.middleware.MobileDetectionMiddleware``
 
     Detects if a mobile browser tries to access the site and sets the flavour
     to ``DEFAULT_MOBILE_FLAVOUR`` settings value in case.
 
-``django_mobile.cache.cache_page``
+``mobileme.cache.cache_page``
 
     Same as django's ``cache_page`` decorator but applies ``vary_on_flavour``
     before the view is decorated with
     ``django.views.decorators.cache.cache_page``.
 
-``django_mobile.cache.vary_on_flavour``
+``mobileme.cache.vary_on_flavour``
 
     A decorator created from the ``CacheFlavourMiddleware`` middleware.
 
-``django_mobile.cache.middleware.CacheFlavourMiddleware``
+``mobileme.cache.middleware.CacheFlavourMiddleware``
 
     Adds ``X-Flavour`` header to ``request.META`` in ``process_request`` and
     adds this header to ``response['Vary']`` in ``process_response``.
@@ -212,7 +212,7 @@ Customization
 .. _customization:
 
 There are some points available that let you customize the behaviour of
-**django-mobile**. Here are some possibilities listed:
+**django-mobileme**. Here are some possibilities listed:
 
 ``MobileDetectionMiddleware``
 -----------------------------
@@ -221,7 +221,7 @@ The built-in middleware to detect if the user is using a mobile browser served
 well in production but is far from perfect and also implemented in a very
 simplistic way. You can safely remove this middleware from your settings and
 add your own version instead. Just make sure that it calls
-``django_mobile.set_flavour`` at some point to set the correct flavour for
+``mobileme.set_flavour`` at some point to set the correct flavour for
 you.
 
 Settings
@@ -229,7 +229,7 @@ Settings
 
 .. _settings:
 
-Here is a list of settings that are used by **django-mobile** and can be
+Here is a list of settings that are used by **django-mobileme** and can be
 changed in your own ``settings.py``:
 
 FLAVOURS
@@ -255,7 +255,7 @@ flavoured templates. This is useful if you have many flavours and want to
 store them in a common subdirectory. Example::
 
     from django.template.loader import render_to_string
-    from django_mobile import set_flavour
+    from mobileme import set_flavour
 
     set_flavour('mobile')
     render_to_string('index.html') # will render 'mobile/index.html'
@@ -273,12 +273,12 @@ store them in a common subdirectory. Example::
 FLAVOURS_TEMPLATE_LOADERS
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
-**django-mobile**'s template loader can load templates prefixed with the
+**django-mobileme**'s template loader can load templates prefixed with the
 current flavour. Specify with this setting which loaders are used to load
 flavoured templates.
 
 **Default:** same as ``TEMPLATE_LOADERS`` setting but without
-``'django_mobile.loader.Loader'``.
+``'mobileme.loader.Loader'``.
 
 FLAVOURS_GET_PARAMETER
 ^^^^^^^^^^^^^^^^^^^^^^

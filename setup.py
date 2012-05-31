@@ -33,15 +33,15 @@ long_description = UltraMagicString(long_description)
 
 
 setup(
-    name = 'django-mobile',
-    version = '0.2.3',
-    url = 'https://github.com/gregmuellegger/django-mobile',
-    license = 'BSD',
-    description = u'Detect mobile browsers and serve different template flavours to them.',
-    long_description = long_description,
-    author = UltraMagicString('Gregor Müllegger'),
-    author_email = 'gregor@muellegger.de',
-    classifiers = [
+    name='django-mobileme',
+    version='0.3.0',
+    url='https://github.com/zyegfryed/django-mobileme',
+    license='BSD',
+    description=u'Detect mobile browsers and serve different template flavours to them.',
+    long_description=long_description,
+    author=UltraMagicString('Sébastien Fievet'),
+    author_email='zyegfryed@gmail.com',
+    classifiers=[
         'Development Status :: 4 - Beta',
         'Environment :: Web Environment',
         'Framework :: Django',
@@ -51,11 +51,8 @@ setup(
         'Operating System :: OS Independent',
         'Programming Language :: Python',
     ],
-    packages = [
-        'django_mobile',
-        'django_mobile.cache',
-    ],
-    install_requires = ['setuptools'],
-    tests_require = ['Django', 'mock'],
-    test_suite = 'django_mobile_tests.runtests.runtests',
+    packages=['mobileme'],
+    install_requires=['setuptools'],
+    tests_require=['Django', 'mock'],
+    test_suite='mobileme_tests.runtests.runtests',
 )

@@ -1,4 +1,4 @@
-Copyright (c) 2010, Gregor Müllegger
+Copyright (c) 2010, Sébastien Fievet
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without

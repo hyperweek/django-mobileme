@@ -1,2 +1,3 @@
+Sébastien Fievet <zygfryed@gmail.com>
 Gregor Müllegger <gregor@muellegger.de>
 Ryan Showalter
