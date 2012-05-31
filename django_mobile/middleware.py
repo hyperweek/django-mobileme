@@ -20,6 +20,7 @@ class XFlavourMiddleware(object):
         patch_vary_headers(response, ['X-Flavour'])
         if 'X-Flavour' not in response:
             response['X-Flavour'] = get_flavour_from_request(request)
+        print "flavour: ", response['X-Flavour']
         return response
 
 
