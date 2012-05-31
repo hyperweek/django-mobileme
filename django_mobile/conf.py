@@ -18,18 +18,11 @@ class SettingsProxy(object):
 
 
 class defaults(object):
-    FLAVOURS = (u'full', u'mobile',)
-    DEFAULT_MOBILE_FLAVOUR = u'mobile'
-    FLAVOURS_TEMPLATE_PREFIX = u''
-    FLAVOURS_GET_PARAMETER = u'flavour'
-    FLAVOURS_STORAGE_BACKEND = u'cookie'
-    FLAVOURS_COOKIE_KEY = u'flavour'
-    FLAVOURS_SESSION_KEY = u'flavour'
-    FLAVOURS_TEMPLATE_LOADERS = []
-    for loader in django_settings.TEMPLATE_LOADERS:
-        if loader != 'django_mobile.loader.Loader':
-            FLAVOURS_TEMPLATE_LOADERS.append(loader)
-    FLAVOURS_TEMPLATE_LOADERS = tuple(FLAVOURS_TEMPLATE_LOADERS)
+    FLAVOURS = ('full', 'mobile',)
+    DEFAULT_MOBILE_FLAVOUR = 'mobile'
+    FLAVOURS_TEMPLATE_PREFIX = ''
+    FLAVOURS_COOKIE_NAME = 'flavour'
+    FLAVOURS_SESSION_NAME = 'flavour'
 
 
 settings = SettingsProxy(django_settings, defaults)

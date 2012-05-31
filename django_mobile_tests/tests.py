@@ -44,7 +44,7 @@ class BasicFunctionTests(BaseTestCase):
             set_flavour('mobile', request=request)
             self.assertEqual(request.COOKIES, {})
             set_flavour('mobile', request=request, permanent=True)
-            self.assertEqual(request.COOKIES, {settings.FLAVOURS_COOKIE_KEY: 'mobile'})
+            self.assertEqual(request.COOKIES, {settings.FLAVOURS_COOKIE_NAME: 'mobile'})
             self.assertEqual(get_flavour(request), 'mobile')
         finally:
             settings.FLAVOURS_STORAGE_BACKEND = original_FLAVOURS_STORAGE_BACKEND
@@ -58,7 +58,7 @@ class BasicFunctionTests(BaseTestCase):
             set_flavour('mobile', request=request)
             self.assertEqual(request.session, {})
             set_flavour('mobile', request=request, permanent=True)
-            self.assertEqual(request.session, {settings.FLAVOURS_SESSION_KEY: 'mobile'})
+            self.assertEqual(request.session, {settings.FLAVOURS_SESSION_NAME: 'mobile'})
             self.assertEqual(get_flavour(request), 'mobile')
         finally:
             settings.FLAVOURS_STORAGE_BACKEND = original_FLAVOURS_STORAGE_BACKEND

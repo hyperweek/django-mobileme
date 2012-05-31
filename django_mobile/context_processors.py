@@ -1,14 +1,13 @@
-from django_mobile import get_flavour
-from django_mobile.conf import settings
+from .conf import settings
 
 
 def flavour(request):
     return {
-        'flavour': get_flavour(),
+        'flavour': request.flavour,
     }
 
 
 def is_mobile(request):
     return {
-        'is_mobile': get_flavour() == settings.DEFAULT_MOBILE_FLAVOUR,
+        'is_mobile': request.flavour == settings.DEFAULT_MOBILE_FLAVOUR,
     }
