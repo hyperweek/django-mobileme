@@ -4,12 +4,11 @@ to load templates from them in order, flavouring and caching the result.
 """
 
 from django.template.base import TemplateDoesNotExist
-from django.template.loader import (BaseLoader, get_template_from_string,
-                                    find_template_loader, make_origin)
+from django.template.loader import (get_template_from_string,
+                                    find_template_loader)
 from django.utils.hashcompat import sha_constructor
 
-from .. import get_flavour
-from ..conf import settings
+from .base import BaseLoader
 
 
 class Loader(BaseLoader):
@@ -27,29 +26,13 @@ class Loader(BaseLoader):
             for loader in self._loaders:
                 if isinstance(loader, tuple) or isinstance(loader, list) \
                     and loader[0] == 'mobileme.loaders.mobile.Loader':
-                    # If we found the mobile template loader, append all
-                    # subloader to the cached list.
+                    # If we've found the mobile template loader, append all
+                    # related loaders to the cached list.
                     _loader = find_template_loader(loader)
                     self._cached_loaders.extend(_loader.loaders)
                 else:
                     self._cached_loaders.append(find_template_loader(loader))
         return self._cached_loaders
-
-    def prepare_template_name(self, template_name):
-        template_name = u'%s/%s' % (get_flavour(), template_name)
-        if settings.FLAVOURS_TEMPLATE_PREFIX:
-            template_name = settings.FLAVOURS_TEMPLATE_PREFIX + template_name
-        return template_name
-
-    def find_template(self, name, dirs=None):
-        for loader in self.loaders:
-            try:
-                template, display_name = loader(name, dirs)
-                return (template, make_origin(display_name, loader, name,
-                                              dirs))
-            except TemplateDoesNotExist:
-                pass
-        raise TemplateDoesNotExist(name)
 
     def _load_template(self, template_name, template_dirs=None):
         key = template_name
@@ -76,11 +59,12 @@ class Loader(BaseLoader):
         return self.template_cache[key], None
 
     def load_template(self, template_name, template_dirs=None):
-        flavoured_template_name = self.prepare_template_name(template_name)
-        try:
-            return self._load_template(flavoured_template_name, template_dirs)
-        except TemplateDoesNotExist:
-            pass
+        if self.should_flavour(template_name):
+            _template_name = self.prepare_template_name(template_name)
+            try:
+                return self._load_template(_template_name, template_dirs)
+            except TemplateDoesNotExist:
+                pass
         return self._load_template(template_name, template_dirs)
 
     def reset(self):
