@@ -34,7 +34,7 @@ long_description = UltraMagicString(long_description)
 
 setup(
     name='django-mobileme',
-    version='0.3.0',
+    version='0.4.0',
     url='https://github.com/zyegfryed/django-mobileme',
     license='BSD',
     description=u'Detect mobile browsers and serve different template flavours to them.',
