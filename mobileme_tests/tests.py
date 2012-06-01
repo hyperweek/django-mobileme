@@ -4,10 +4,9 @@ from django.template import RequestContext, TemplateDoesNotExist
 from django.template.loaders import app_directories, filesystem
 from django.test import Client, TestCase
 
-from mock import MagicMock, Mock, patch
+from mock import Mock, patch
 
-from mobileme import get_flavour, set_flavour
-from mobileme.conf import settings
+from mobileme.utils import get_flavour, set_flavour
 from mobileme.middleware import DetectMobileMiddleware
 
 

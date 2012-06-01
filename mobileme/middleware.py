@@ -1,8 +1,7 @@
 from django.utils.cache import patch_vary_headers
 
-from . import set_flavour
 from .conf import settings
-from .utils import get_flavour_from_request
+from .utils import get_flavour_from_request, set_flavour
 
 
 class DetectMobileMiddleware(object):

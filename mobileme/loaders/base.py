@@ -1,8 +1,8 @@
 from django.template.base import TemplateDoesNotExist
 from django.template.loader import BaseLoader as DjangoBaseLoader, make_origin
 
-from .. import get_flavour
 from ..conf import settings
+from ..utils import get_flavour
 
 
 class BaseLoader(DjangoBaseLoader):
