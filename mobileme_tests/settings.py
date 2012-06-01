@@ -54,7 +54,7 @@ SECRET_KEY = '<REPLACE:SECRET_KEY>'
 
 # List of callables that know how to import templates from various sources.
 TEMPLATE_LOADERS = (
-    ('mobileme.loaders.Loader', (
+    ('mobileme.loaders.mobile.Loader', (
         'django.template.loaders.filesystem.Loader',
         'django.template.loaders.app_directories.Loader',
         # 'django.template.loaders.eggs.load_template_source',

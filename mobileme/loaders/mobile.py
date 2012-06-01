@@ -1,8 +1,13 @@
+"""
+Wrapper class that takes a list of template loaders as an argument and attempts
+to load templates from them in order, flavouring the result.
+"""
+
 from django.template import TemplateDoesNotExist
 from django.template.loader import find_template_loader, make_origin, BaseLoader
 
-from . import get_flavour
-from .conf import settings
+from .. import get_flavour
+from ..conf import settings
 
 
 class Loader(BaseLoader):
@@ -38,7 +43,8 @@ class Loader(BaseLoader):
     def load_template(self, template_name, template_dirs=None):
         flavoured_template_name = self.prepare_template_name(template_name)
         try:
-            template, origin = self.find_template(flavoured_template_name, template_dirs)
+            template, origin = self.find_template(flavoured_template_name,
+                                                  template_dirs)
         except TemplateDoesNotExist:
             template, origin = self.find_template(template_name, template_dirs)
         return template, None

@@ -44,7 +44,7 @@ class TemplateLoaderTests(BaseTestCase):
         filesystem_loader.side_effect = TemplateDoesNotExist()
         app_directories_loader.side_effect = TemplateDoesNotExist()
 
-        from mobileme.loaders import Loader
+        from mobileme.loaders.mobile import Loader
         loader = Loader([])
         loader._cached_loaders = [filesystem_loader, app_directories_loader]
 
@@ -70,7 +70,7 @@ class TemplateLoaderTests(BaseTestCase):
         filesystem_loader.side_effect = TemplateDoesNotExist()
         app_directories_loader.side_effect = TemplateDoesNotExist()
 
-        from mobileme.loaders import Loader
+        from mobileme.loaders.mobile import Loader
         loader = Loader([])
         loader._cached_loaders = [filesystem_loader, app_directories_loader]
 
