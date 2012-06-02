@@ -23,7 +23,6 @@ class _Library(Library):
                     self.vars_to_resolve = map(Variable, vars_to_resolve)
 
                 def render(self, context):
-                    print "coucou from monkeypatching"
                     resolved_vars = [var.resolve(context) for var in self.vars_to_resolve]
                     if takes_context:
                         args = [context] + resolved_vars
