@@ -15,6 +15,11 @@ class DetectMobileMiddleware(object):
 
 
 class XFlavourMiddleware(object):
+    def process_request(self, request):
+        flavour = request.META.get('X-Flavour', None)
+        if flavour and flavour in settings.FLAVOURS:
+            set_flavour(flavour, request)
+
     def process_response(self, request, response):
         patch_vary_headers(response, ['X-Flavour'])
         if 'X-Flavour' not in response:
