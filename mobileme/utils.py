@@ -33,7 +33,7 @@ def get_flavour_from_request(request):
         if b or v:
             is_mobile = True
 
-    return is_mobile and settings.DEFAULT_MOBILE_FLAVOUR or settings.FLAVOURS[0]
+    return is_mobile and settings.DEFAULT_MOBILE_FLAVOUR or settings.DEFAULT_NOMOBILE_FLAVOUR
 
 
 def get_flavour(request=None, default=None):
@@ -59,7 +59,7 @@ def get_flavour(request=None, default=None):
     if flavour and flavour in settings.FLAVOURS:
         return flavour
 
-    return settings.FLAVOURS[0]
+    return settings.DEFAULT_NOMOBILE_FLAVOUR
 
 
 def set_flavour(flavour, request=None):
