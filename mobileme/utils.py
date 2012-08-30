@@ -24,16 +24,15 @@ def get_flavour_from_request(request):
     if flavour and flavour in settings.FLAVOURS:
         return flavour
 
-    is_mobile = False
     if 'HTTP_USER_AGENT' in request.META:
         user_agent = request.META['HTTP_USER_AGENT']
 
         b = reg_b.search(user_agent)
         v = reg_v.search(user_agent[0:4])
         if b or v:
-            is_mobile = True
+            return settings.DEFAULT_MOBILE_FLAVOUR
 
-    return is_mobile and settings.DEFAULT_MOBILE_FLAVOUR or settings.DEFAULT_NOMOBILE_FLAVOUR
+    return settings.DEFAULT_NOMOBILE_FLAVOUR
 
 
 def get_flavour(request=None, default=None):

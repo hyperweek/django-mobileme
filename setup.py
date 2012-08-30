@@ -68,6 +68,6 @@ setup(
     ],
     packages=['mobileme'],
     install_requires=['setuptools'],
-    tests_require=['Django>1.3,<1.4', 'mock'],
+    tests_require=['Django>1.3,<1.4', 'mock==0.8.0'],
     test_suite='mobileme_tests.runtests.runtests',
 )

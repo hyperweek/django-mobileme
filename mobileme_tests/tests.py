@@ -1,3 +1,5 @@
+from __future__ import with_statement
+
 import threading
 
 from django.template import RequestContext, TemplateDoesNotExist
@@ -14,9 +16,9 @@ def _reset():
     '''
     Reset the thread local.
     '''
-    import mobileme
-    del mobileme._local
-    mobileme._local = threading.local()
+    from mobileme import utils
+    del utils._local
+    utils._local = threading.local()
 
 
 class BaseTestCase(TestCase):
@@ -39,7 +41,7 @@ class BasicFunctionTests(BaseTestCase):
 class TemplateLoaderTests(BaseTestCase):
     @patch.object(app_directories.Loader, 'load_template')
     @patch.object(filesystem.Loader, 'load_template')
-    def test_load_template_on_filesystem(self, filesystem_loader, app_directories_loader):
+    def test_load_template(self, filesystem_loader, app_directories_loader):
         filesystem_loader.side_effect = TemplateDoesNotExist()
         app_directories_loader.side_effect = TemplateDoesNotExist()
 
@@ -48,24 +50,24 @@ class TemplateLoaderTests(BaseTestCase):
         loader._cached_loaders = [filesystem_loader, app_directories_loader]
 
         set_flavour('mobile')
-        try:
+        with self.assertRaises(TemplateDoesNotExist):
             loader.load_template('base.html', template_dirs=None)
-        except TemplateDoesNotExist:
-            pass
-        self.assertEqual(filesystem_loader.call_args[0][0], 'mobile/base.html')
-        self.assertEqual(app_directories_loader.call_args[0][0], 'mobile/base.html')
+        self.assertEqual(filesystem_loader.call_args_list[0][0], ('mobile/base.html', None))
+        self.assertEqual(filesystem_loader.call_args_list[1][0], ('base.html', None))
+        self.assertEqual(app_directories_loader.call_args_list[0][0], ('mobile/base.html', None))
+        self.assertEqual(app_directories_loader.call_args_list[1][0], ('base.html', None))
 
         set_flavour('full')
-        try:
+        with self.assertRaises(TemplateDoesNotExist):
             loader.load_template('base.html', template_dirs=None)
-        except TemplateDoesNotExist:
-            pass
-        self.assertEqual(filesystem_loader.call_args[0][0], 'full/base.html')
-        self.assertEqual(app_directories_loader.call_args[0][0], 'full/base.html')
+        self.assertEqual(filesystem_loader.call_args_list[2][0], ('full/base.html', None))
+        self.assertEqual(filesystem_loader.call_args_list[3][0], ('base.html', None))
+        self.assertEqual(app_directories_loader.call_args_list[2][0], ('full/base.html', None))
+        self.assertEqual(app_directories_loader.call_args_list[3][0], ('base.html', None))
 
     @patch.object(app_directories.Loader, 'load_template_source')
     @patch.object(filesystem.Loader, 'load_template_source')
-    def test_load_template_source_on_filesystem(self, filesystem_loader, app_directories_loader):
+    def test_load_template_source(self, filesystem_loader, app_directories_loader):
         filesystem_loader.side_effect = TemplateDoesNotExist()
         app_directories_loader.side_effect = TemplateDoesNotExist()
 
@@ -74,20 +76,12 @@ class TemplateLoaderTests(BaseTestCase):
         loader._cached_loaders = [filesystem_loader, app_directories_loader]
 
         set_flavour('mobile')
-        try:
+        with self.assertRaises(NotImplementedError):
             loader.load_template_source('base.html', template_dirs=None)
-        except TemplateDoesNotExist:
-            pass
-        self.assertEqual(filesystem_loader.call_args[0][0], 'mobile/base.html')
-        self.assertEqual(app_directories_loader.call_args[0][0], 'mobile/base.html')
 
         set_flavour('full')
-        try:
+        with self.assertRaises(NotImplementedError):
             loader.load_template_source('base.html', template_dirs=None)
-        except TemplateDoesNotExist:
-            pass
-        self.assertEqual(filesystem_loader.call_args[0][0], 'full/base.html')
-        self.assertEqual(app_directories_loader.call_args[0][0], 'full/base.html')
 
     def test_functional(self):
         from django.template.loader import render_to_string
@@ -105,7 +99,7 @@ class TemplateLoaderTests(BaseTestCase):
         self.assertEqual(result, 'Mobile!')
 
 
-class DetectMobileMiddlewareTests(BaseTestCase):
+class NonRealAgentNameTests(BaseTestCase):
     @patch('mobileme.middleware.set_flavour')
     def test_mobile_browser_agent(self, set_flavour):
         request = Mock()
@@ -114,7 +108,7 @@ class DetectMobileMiddlewareTests(BaseTestCase):
         }
         middleware = DetectMobileMiddleware()
         middleware.process_request(request)
-        self.assertEqual(set_flavour.call_args, (('mobile', request), {}))
+        self.assertEqual(set_flavour.call_args, (('full', request), {}))
 
     @patch('mobileme.middleware.set_flavour')
     def test_desktop_browser_agent(self, set_flavour):
@@ -125,27 +119,6 @@ class DetectMobileMiddlewareTests(BaseTestCase):
         middleware = DetectMobileMiddleware()
         middleware.process_request(request)
         self.assertEqual(set_flavour.call_args, (('full', request), {}))
-
-
-# class SetFlavourMiddlewareTests(BaseTestCase):
-#     def test_set_default_flavour(self):
-#         request = Mock()
-#         request.META = MagicMock()
-#         request.GET = {}
-#         middleware = SetFlavourMiddleware()
-#         middleware.process_request(request)
-#         # default flavour is set
-#         self.assertEqual(get_flavour(), 'full')
-
-#     @patch('mobileme.middleware.set_flavour')
-#     def test_set_flavour_through_get_parameter(self, set_flavour):
-#         request = Mock()
-#         request.META = MagicMock()
-#         request.GET = {'flavour': 'mobile'}
-#         middleware = SetFlavourMiddleware()
-#         middleware.process_request(request)
-#         self.assertEqual(set_flavour.call_args,
-#             (('mobile', request), {'permanent': True}))
 
 
 class RealAgentNameTests(BaseTestCase):

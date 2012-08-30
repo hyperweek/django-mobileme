@@ -18,7 +18,7 @@ class SettingsProxy(object):
 
 
 class defaults(object):
-    FLAVOURS = ('mobile',)
+    FLAVOURS = ('full', 'mobile',)
     DEFAULT_MOBILE_FLAVOUR = 'mobile'
     DEFAULT_NOMOBILE_FLAVOUR = 'full'
     FLAVOURS_TEMPLATE_PREFIX = ''
