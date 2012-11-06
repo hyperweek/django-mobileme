@@ -22,7 +22,6 @@ class defaults(object):
     DEFAULT_MOBILE_FLAVOUR = 'mobile'
     DEFAULT_NOMOBILE_FLAVOUR = 'full'
     FLAVOURS_TEMPLATE_PREFIX = ''
-    FLAVOURS_NOMOBILE_TEMPLATE = True
     FLAVOURS_COOKIE_NAME = 'flavour'
     FLAVOURS_SESSION_NAME = 'flavour'
 

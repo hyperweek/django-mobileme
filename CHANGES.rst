@@ -2,6 +2,18 @@
 Changelog
 =========
 
+0.7.0 / 2012-11-06
+==================
+
+REFACTORED ALL THE THINGS!!!
+
+  * Django 1.4+ is now required.
+  * Renamed SetTemplateResponseMiddleware to TemplateForFlavourMiddleware.
+  * Added a replacement of Django's inclusion_tag.
+  * Removed set_flavour and get_flavour functions.
+  * Renamed get_flavour_from_request to flavour_from_request.
+  * No longer relies on threadlocals.
+
 0.4.0 / 2012-06-01
 ==================
 

@@ -1,6 +1,7 @@
 from django import http
 
 from .conf import settings
+from .utils import check_for_flavour
 
 
 def set_flavour(request, **kwargs):
@@ -22,7 +23,7 @@ def set_flavour(request, **kwargs):
     response = http.HttpResponseRedirect(next)
     if request.method == 'POST':
         flavour = request.POST.get('flavour', None)
-        if flavour and flavour in settings.FLAVOURS:
+        if flavour and check_for_flavour(flavour):
             if hasattr(request, 'session'):
                 request.session[settings.FLAVOURS_SESSION_NAME] = flavour
             else:
