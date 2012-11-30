@@ -6,8 +6,7 @@ from .utils import (flavour_from_request, check_for_flavour,
 
 class DetectMobileMiddleware(object):
     def process_request(self, request):
-        flavour = flavour_from_request(request)
-        request.flavour = flavour
+        request.flavour = flavour_from_request(request)
 
     def process_response(self, request, response):
         patch_vary_headers(response, ['User-Agent'])
@@ -24,7 +23,7 @@ class XFlavourMiddleware(object):
 
     def process_response(self, request, response):
         if 'X-Flavour' not in response:
-            response['X-Flavour'] = request.flavour
+            response['X-Flavour'] = flavour_from_request(request)
         patch_vary_headers(response, ['X-Flavour'])
         return response
 
